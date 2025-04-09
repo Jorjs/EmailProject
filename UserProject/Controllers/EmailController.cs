@@ -28,7 +28,8 @@ namespace UserProject.Controllers
             var attempt = await _usersAttemptService.Create(sendEmailDto);
             await _emailSender.SendEmailAsync(sendEmailDto.Email, attempt._id);
 
-            return CreatedAtAction("created", new { Id = attempt._id }, attempt);
+            return StatusCode(StatusCodes.Status201Created);
+
         }
     }
 }
