@@ -26,7 +26,7 @@ namespace EmailProject.Services
 
             message.Body = new TextPart("html")
             {
-                Text = _emailSettings.Template
+                Text = messageBody
             };
 
             using (var client = new SmtpClient())
