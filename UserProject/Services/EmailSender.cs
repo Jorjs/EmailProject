@@ -9,7 +9,7 @@ namespace EmailProject.Services
 {
     public class EmailSender : IEmailSender
     {
-        private EmailSettings _emailSettings;
+        private readonly EmailSettings _emailSettings;
 
         public EmailSender(IOptions<EmailSettings> emailSettings)
         {
@@ -20,9 +20,9 @@ namespace EmailProject.Services
             var message = new MimeMessage();
             string messageBody = _emailSettings.Template.Replace("{id}", id);
 
-            message.From.Add(new MailboxAddress("Sender Name", _emailSettings.SendEmail));
-            message.To.Add(new MailboxAddress("Recipient Name", email));
-            message.Subject = "Your credit card details have been stole";
+            message.From.Add(new MailboxAddress("", _emailSettings.SendEmail));
+            message.To.Add(new MailboxAddress("", email));
+            message.Subject = _emailSettings.Subject;
 
             message.Body = new TextPart("html")
             {
@@ -31,7 +31,7 @@ namespace EmailProject.Services
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync("localhost", 25, SecureSocketOptions.None);
+                await client.ConnectAsync(_emailSettings.Host, _emailSettings.Port, _emailSettings.SecureSocketOption);
 
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);

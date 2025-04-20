@@ -14,6 +14,7 @@ namespace UserProject.Models
         public string Email { get; set; }
         public string EmailContent { get; set; }
         public bool UserClicked { get; set; }
+        public bool Sent { get; set; }
     }
 }
 

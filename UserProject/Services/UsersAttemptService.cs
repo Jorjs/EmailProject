@@ -14,29 +14,36 @@ namespace UserProject.Services
     public class UsersAttemptService : IUsersAttemptService
     {
         private EmailSettings _emailSettings;
-        private readonly IUsersAttemptRepository _userRepository;
+        private readonly IUsersAttemptRepository _usersAttemptRepository;
 
         public UsersAttemptService(IUsersAttemptRepository userRepository, IOptions<EmailSettings> emailSettings) 
         {
             _emailSettings = emailSettings.Value; ;
-            _userRepository = userRepository;
+            _usersAttemptRepository = userRepository;
         }
 
 
-        public async Task<UsersAttempts> Create(EmailDto emailInfo)
+        public async Task<UsersAttempts> Create(string email)
         {
-            //string messageBody = _emailSettings.Template.Replace("{id}", id);
-
             var userAttemptModel = new UsersAttempts()
             {
-                Email = emailInfo.Email,
+                Email = email,
                 UserClicked = false,
                 EmailContent = _emailSettings.Template
             };
 
-            var userModels = await _userRepository.Create(userAttemptModel);
+            var userModels = await _usersAttemptRepository.Create(userAttemptModel);
 
             return userModels;
+        }
+        public async Task UpdateStatus(string id, bool sent)
+        {
+            var userModels = await _usersAttemptRepository.UpdateStatus(id, sent);
+
+            if(userModels.ModifiedCount == 0)
+            {
+                throw new KeyNotFoundException($"Attempt {id} not found");
+            }
         }
 
 

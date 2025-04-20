@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EmailProject.Models.DTO;
 using EmailProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,22 +14,19 @@ namespace UserProject.Controllers
     [ApiController]
     public class EmailController : ControllerBase
     {
-        private readonly IEmailSender _emailSender;
-        private readonly IUsersAttemptService _usersAttemptService;
+        private readonly IEmailService _emailService;
 
-        public EmailController(IUsersAttemptService usersAttemptService, IEmailSender emailSender)
+        public EmailController(IEmailService emailService)
         {
-            _usersAttemptService = usersAttemptService;
-            _emailSender = emailSender;
+            _emailService = emailService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendEmail([FromBody] EmailDto sendEmailDto)
+        public async Task<ActionResult<AttemptDto>> SendEmail([FromBody] EmailDto sendEmailDto)
         {
-            var attempt = await _usersAttemptService.Create(sendEmailDto);
-            await _emailSender.SendEmailAsync(sendEmailDto.Email, attempt._id);
+            var attempts = await _emailService.SendEmail(sendEmailDto.Email);
 
-            return StatusCode(StatusCodes.Status201Created);
+            return StatusCode(201, attempts);
 
         }
     }

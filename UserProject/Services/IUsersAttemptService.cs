@@ -6,6 +6,7 @@ namespace UserProject.Services
 {
     public interface IUsersAttemptService
     {
-        Task<UsersAttempts> Create(EmailDto emailInfo);
+        Task<UsersAttempts> Create(string email);
+        Task UpdateStatus(string id, bool sent);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using UserProject.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
 using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace UserProject.Repositories
 {
@@ -18,6 +17,14 @@ namespace UserProject.Repositories
         {
             await _collection.InsertOneAsync(attempt);
             return attempt;
+        }
+
+        public async Task<UpdateResult> UpdateStatus(string id, bool status)
+        {
+            var filter = Builders<UsersAttempts>.Filter.Eq(u => u._id, id);
+            var update = Builders<UsersAttempts>.Update.Set(u => u.Sent, status);
+
+            return await _collection.UpdateOneAsync(filter, update);
         }
     }
 }

@@ -32,15 +32,19 @@ namespace UserProject.Middlewares
 
         private async Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
         {
-            var details = new ProblemDetails
+            var statusCode = ex switch
             {
-                Id = Guid.NewGuid(),
-                StatusCode = 400,
-                ErrorMessage = "Internal Server Error"
+                KeyNotFoundException => HttpStatusCode.NotFound,
+                _ => HttpStatusCode.InternalServerError
             };
 
-            //Log The Error
-             _logger.LogError(ex, "{Message} Id: {Id}", ex.Message, details.Id);
+            var details = new ProblemDetails
+            {
+                StatusCode = (int)statusCode,
+                ErrorMessage = statusCode == HttpStatusCode.NotFound ? ex.Message : "Internal Server Error"
+            };
+
+            _logger.LogError(ex, "{Message}", ex.Message);
 
             // Return A Custom Exrror Response
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

@@ -1,1 +1,1 @@
-Please run the docker compose. after running it, run the application on http profile.
+Please run the docker compose. 
